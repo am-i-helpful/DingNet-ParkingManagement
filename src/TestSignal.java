@@ -25,7 +25,7 @@ public class TestSignal {
                 environment, 14,12);
         new Mote(random.nextLong(),0,
                 0,
-                environment, 14,12, new LinkedList<>(),0,new LinkedList<>(),10,0.5);
+                "",0, environment, 14,12, new LinkedList<>(),0,new LinkedList<>(),10,0.5);
         Mote mote = environment.getMotes().get(0);
         mote.sendToGateWay(new Byte[0],new HashMap<>());
         System.out.println(mote.getSentTransmissions(mote.getEnvironment().getNumberOfRuns()-1).get(0).getTransmissionPower() + ", "+mote.getSentTransmissions(mote.getEnvironment().getNumberOfRuns()-1).get(1).getTransmissionPower());

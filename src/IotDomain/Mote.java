@@ -58,12 +58,20 @@ public class Mote extends NetworkEntity {
     
     private Integer startOffset;
 
+    private String moteName;
+
+    private Integer occupancy; // represents parking-occupancy reflected by mote stationed in parking-location
+
+    private Integer transmissionPower;
+
     /**
      * A constructor generating a node with a given x-coordinate, y-coordinate, environment, transmitting power
      * spreading factor, list of MoteSensors, energy level, path, sampling rate, movement speed and start offset.
      * @param DevEUI The device's unique identifier
      * @param xPos  The x-coordinate of the node.
      * @param yPos  The y-coordinate of the node.
+     * @param moteName  The name of the parking-location of the node.
+     * @param occupancy The occupancy of the parking-location of the node.
      * @param environment   The environment of the node.
      * @param SF    The spreading factor of the node.
      * @param transmissionPower The transmitting power of the node.
@@ -75,11 +83,13 @@ public class Mote extends NetworkEntity {
      * @param startOffset The start offset of this mote.
      */
     
-    public Mote(Long DevEUI, Integer xPos, Integer yPos, Environment environment, Integer transmissionPower,
+    public Mote(Long DevEUI, Integer xPos, Integer yPos, String moteName, Integer occupancy, Environment environment, Integer transmissionPower,
                 Integer SF, LinkedList<MoteSensor> moteSensors, Integer energyLevel, LinkedList<GeoPosition> path, Integer samplingRate, Double movementSpeed, Integer startOffset){
        super(DevEUI, xPos,yPos, environment,transmissionPower,SF,1.0);
         environment.addMote(this);
         OverTheAirActivation();
+        this.moteName = moteName;
+        this.occupancy = occupancy;
         this.moteSensors = moteSensors;
         this.path = path;
         this.energyLevel = energyLevel;
@@ -106,9 +116,9 @@ public class Mote extends NetworkEntity {
      * @param movementSpeed The movement speed of this mote.
      */
     
-    public Mote(Long DevEUI, Integer xPos, Integer yPos, Environment environment, Integer transmissionPower,
+    public Mote(Long DevEUI, Integer xPos, Integer yPos, String moteName, Integer occupancy, Environment environment, Integer transmissionPower,
                 Integer SF, LinkedList<MoteSensor> moteSensors, Integer energyLevel, LinkedList<GeoPosition> path, Integer samplingRate, Double movementSpeed){
-        this(DevEUI,xPos,yPos, environment,transmissionPower,SF,moteSensors,energyLevel,path,samplingRate, movementSpeed,Math.abs((new Random()).nextInt(5)));
+        this(DevEUI,xPos,yPos, moteName, occupancy, environment,transmissionPower,SF,moteSensors,energyLevel,path,samplingRate, movementSpeed,Math.abs((new Random()).nextInt(5)));
     }
 
     /**
@@ -275,4 +285,18 @@ public class Mote extends NetworkEntity {
     public Integer getStartOffset(){
         return this.startOffset;
     }
+
+    public String getMoteName(){
+        return this.moteName;
+    }
+
+    public Integer getParkingOccupancy(){
+        return this.occupancy;
+    }
+
+    public void setParkingOccupancy(Integer suppliedOccupancy){
+        this.occupancy = suppliedOccupancy;
+    }
+
+//    public void setTransmissionPower(Integer power){super.setTransmissionPower(power);}
 }

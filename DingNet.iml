@@ -18,9 +18,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="jxmapviewer2-2.4 (2)" level="project" />
-    <orderEntry type="library" name="commons-logging-1.1.1 (2)" level="project" />
     <orderEntry type="library" name="AnnotationsDoclets" level="application" />
     <orderEntry type="library" name="jfreechart-1.5.0" level="project" />
+    <orderEntry type="library" name="Arquillian JUnit:Release" level="project" />
+    <orderEntry type="library" name="org.jfree:jfreechart:1.5.0" level="project" />
+    <orderEntry type="library" name="jxmapviewer2-2.4" level="project" />
+    <orderEntry type="library" name="commons-logging-1.1.1" level="project" />
+    <orderEntry type="library" name="org.jxmapviewer:jxmapviewer2:2.4" level="project" />
+    <orderEntry type="library" name="Arquillian TestNG:Release" level="project" />
+    <orderEntry type="library" name="jfreechart-1.5.0-javadoc" level="project" />
   </component>
 </module>

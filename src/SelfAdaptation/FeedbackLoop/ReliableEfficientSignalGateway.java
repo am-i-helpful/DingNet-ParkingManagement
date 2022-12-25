@@ -26,7 +26,6 @@ public class ReliableEfficientSignalGateway extends GenericFeedbackLoop {
         gatewayBuffer = new FeedbackLoopGatewayBuffer();
         reliableMinPowerBuffers = new HashMap<>();
 
-
     }
 
     /**
