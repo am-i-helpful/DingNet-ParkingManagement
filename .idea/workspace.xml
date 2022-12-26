@@ -10,17 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6265720d-5533-4396-b48c-656c29706af3" name="Default" comment="Structure DingNet to include Parking-System notion">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/commons_logging_1_1_1__2_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jxmapviewer2_2_4__2_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DingNet.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DingNet.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DingNet execution.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DingNetExe/user/configurations/parkingConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/DingNetExe/user/configurations/parkingConfig.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GUI/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/MainGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GUI/MapViewer/MoteWaypointPainter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/MapViewer/MoteWaypointPainter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GUI/MapViewer/MoteWaypointRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/MapViewer/MoteWaypointRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IotDomain/Mote.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/IotDomain/Mote.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DingNet/IotDomain/Simulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DingNet/IotDomain/Simulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DingNet/SelfAdaptation/FeedbackLoop/ParkingOccupancyLoop.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DingNet/SelfAdaptation/FeedbackLoop/ParkingOccupancyLoop.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/IotDomain/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/IotDomain/Simulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SelfAdaptation/FeedbackLoop/ParkingOccupancyLoop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SelfAdaptation/FeedbackLoop/ParkingOccupancyLoop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Teamwork/ThreadedServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Teamwork/ThreadedServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +92,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="shekhar" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -525,10 +522,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.MainGUI" />
-        <item itemvalue="Application.MapView" />
-        <item itemvalue="Application.TestSignal" />
         <item itemvalue="Application.MoteGUI" />
         <item itemvalue="Application.StartGUI" />
+        <item itemvalue="Application.TestSignal" />
+        <item itemvalue="Application.MapView" />
       </list>
     </recent_temporary>
   </component>
@@ -744,6 +741,7 @@
       <workItem from="1671930430906" duration="1879000" />
       <workItem from="1671978727530" duration="16211000" />
       <workItem from="1672054784198" duration="22198000" />
+      <workItem from="1672091016363" duration="3883000" />
     </task>
     <task id="LOCAL-00001" summary="Add DingNet project's base source">
       <created>1670429605673</created>
@@ -759,7 +757,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671931050520</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Structure DingNet to include Parking-System notion">
+      <created>1672091257443</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1672091257443</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">

@@ -175,7 +175,7 @@ public class Simulation implements Runnable {
             while (!STATUS.equals("END")) {
                 //this.gui.swingWorkerCreation();
                 // Add message exchange logic here
-                out.println(userInput);
+                // out.println(userInput);
                 userInput += 5;
                 // Thread.sleep(100);
                 receivedOutput = in.readLine();

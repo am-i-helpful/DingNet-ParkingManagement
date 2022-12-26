@@ -59,7 +59,8 @@ public class ParkingOccupancyLoop extends GenericFeedbackLoop {
                 }
             }
 
-            // Adapt power of the mote, as per the parking-occupancy logic
+            // Adapt power of the mote, as per the parking-occupancy logic of
+            // adapting power with change in parking occupancy over a factor of 7 in any of the parking locations
             int total_vehicles = mote.getParkingOccupancy();
             int mote_power = (int) Math.floor((double)total_vehicles / 7);
             if (total_vehicles % 7 != 0 && total_vehicles != 0)
