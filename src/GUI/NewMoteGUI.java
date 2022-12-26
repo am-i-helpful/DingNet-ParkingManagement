@@ -114,7 +114,7 @@ public class NewMoteGUI {
                 moteSensors.add((MoteSensor) sensorList.getModel().getElementAt(i));
             }
             new Mote(Long.parseUnsignedLong(EUIDtextField.getText()), (Integer) xPosSpinner.getValue(),
-                    (Integer) yPosSpinner.getValue(), environment, (Integer) powerSpinner.getValue(),
+                    (Integer) yPosSpinner.getValue(), "", 0, environment, (Integer) powerSpinner.getValue(),
                     (Integer) SFSpinner.getValue(), moteSensors, 20, new LinkedList<>(), (Integer) samplingSpinner.getValue(), (Double) movementSpinner.getValue());
             parent.refresh();
             frame.dispose();

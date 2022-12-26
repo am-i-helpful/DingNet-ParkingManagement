@@ -3,10 +3,12 @@ package GUI;
 
 import GUI.MapViewer.*;
 import IotDomain.*;
+import Teamwork.*;
 import SelfAdaptation.AdaptationGoals.AdaptationGoal;
 import SelfAdaptation.AdaptationGoals.IntervalAdaptationGoal;
 import SelfAdaptation.AdaptationGoals.ThresholdAdaptationGoal;
 import SelfAdaptation.FeedbackLoop.GenericFeedbackLoop;
+import SelfAdaptation.FeedbackLoop.ParkingOccupancyLoop;
 import SelfAdaptation.FeedbackLoop.ReliableEfficientDistanceGateway;
 import SelfAdaptation.FeedbackLoop.ReliableEfficientSignalGateway;
 import SelfAdaptation.Instrumentation.MoteEffector;
@@ -60,9 +62,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.net.Socket;
 import java.util.List;
 import java.util.*;
 
@@ -131,8 +133,16 @@ public class MainGUI extends JFrame {
     private Integer packetsSent;
     private Integer packetsLost;
 
+    private String STATUS;
+
+    private HashMap<String, Mote> motesUpdatedProfile;
+
+    private Socket clientSocket;
 
     public MainGUI() {
+        // initialse mote-based hashmap to quickly load settings
+        motesUpdatedProfile = new HashMap<>();
+        STATUS = "START";
 
         QoS.putAdaptationGoal("reliableCommunication", new IntervalAdaptationGoal(0.0, 0.0));
         QoS.putAdaptationGoal("energyConsumption", new ThresholdAdaptationGoal(0.0));
@@ -143,7 +153,6 @@ public class MainGUI extends JFrame {
         editColBoundButton.setEnabled(false);
         editEnConButton.setEnabled(false);
         editRelComButton.setEnabled(false);
-
 
         simulation = new Simulation(this);
         inputProfiles = loadInputProfiles();
@@ -166,6 +175,9 @@ public class MainGUI extends JFrame {
 
         ReliableEfficientDistanceGateway reliableEfficientDistanceGateway = new ReliableEfficientDistanceGateway();
         algorithms.add(reliableEfficientDistanceGateway);
+
+        ParkingOccupancyLoop parkingOccupancyLoop = new ParkingOccupancyLoop(QoS);
+        algorithms.add(parkingOccupancyLoop);
 
 
         /**
@@ -257,6 +269,7 @@ public class MainGUI extends JFrame {
                         simulation.setEnvironment(new Environment(characteristicsMap, mapOrigin, wayPointsSet));
 
                         Element moteNode;
+                        Mote moteElement;
 
                         for (int i = 0; i < motes.getElementsByTagName("mote").getLength(); i++) {
                             moteNode = (Element) motes.getElementsByTagName("mote").item(i);
@@ -264,6 +277,8 @@ public class MainGUI extends JFrame {
                             Element location = (Element) moteNode.getElementsByTagName("location").item(0);
                             Integer xPos = Integer.valueOf(location.getElementsByTagName("xPos").item(0).getTextContent());
                             Integer yPos = Integer.valueOf(location.getElementsByTagName("yPos").item(0).getTextContent());
+                            String moteName = moteNode.getElementsByTagName("name").item(0).getTextContent();
+                            Integer occupancy = Integer.valueOf(moteNode.getElementsByTagName("occupancy").item(0).getTextContent());
                             Integer transmissionPower = Integer.valueOf(moteNode.getElementsByTagName("transmissionPower").item(0).getTextContent());
                             Integer spreadingFactor = Integer.valueOf(moteNode.getElementsByTagName("spreadingFactor").item(0).getTextContent());
                             Integer energyLevel = Integer.valueOf(moteNode.getElementsByTagName("energyLevel").item(0).getTextContent());
@@ -285,7 +300,8 @@ public class MainGUI extends JFrame {
                                 Integer wayPointY = Integer.valueOf(waypoint.getTextContent().split(",")[1]);
                                 path.add(new GeoPosition(simulation.getEnvironment().toLatitude(wayPointY), simulation.getEnvironment().toLongitude(wayPointX)));
                             }
-                            new Mote(devEUI, xPos, yPos, simulation.getEnvironment(), transmissionPower, spreadingFactor, moteSensors, energyLevel, path, samplingRate, movementSpeed);
+                            moteElement = new Mote(devEUI, xPos, yPos, moteName, occupancy, simulation.getEnvironment(), transmissionPower, spreadingFactor, moteSensors, energyLevel, path, samplingRate, movementSpeed);
+                            motesUpdatedProfile.put(moteName.toUpperCase(), moteElement);
                         }
 
                         Element gatewayNode;
@@ -414,6 +430,10 @@ public class MainGUI extends JFrame {
                             location.appendChild(xPos);
                             location.appendChild(yPos);
                             yPos.appendChild(doc.createTextNode(mote.getYPos().toString()));
+                            Element moteName = doc.createElement("name");
+                            moteName.appendChild(doc.createTextNode(mote.getMoteName()));
+                            Element occupancy = doc.createElement("occupancy");
+                            occupancy.appendChild(doc.createTextNode(mote.getParkingOccupancy().toString()));
                             Element transmissionPower = doc.createElement("transmissionPower");
                             transmissionPower.appendChild(doc.createTextNode(mote.getTransmissionPower().toString()));
                             Element spreadingFactor = doc.createElement("spreadingFactor");
@@ -426,6 +446,8 @@ public class MainGUI extends JFrame {
                             movementSpeed.appendChild(doc.createTextNode(mote.getMovementSpeed().toString()));
                             moteElement.appendChild(devEUI);
                             moteElement.appendChild(location);
+                            moteElement.appendChild(moteName);
+                            moteElement.appendChild(occupancy);
                             moteElement.appendChild(transmissionPower);
                             moteElement.appendChild(spreadingFactor);
                             moteElement.appendChild(energyLevel);
@@ -513,7 +535,7 @@ public class MainGUI extends JFrame {
         singleRunButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                simulation.singleRun(speedSlider.getValue());
+                simulation.singleRun(speedSlider.getValue(), STATUS, clientSocket, motesUpdatedProfile);
             }
         });
         adaptationComboBox.addActionListener(new ActionListener() {
@@ -719,16 +741,11 @@ public class MainGUI extends JFrame {
                                     receivedTransmissionElement.appendChild(timeOnAir);
                                     receivedTransmissionElement.appendChild(powerSetting);
                                     receivedTransmissionElement.appendChild(collision);
-
                                     receivedTransmissions.appendChild(receivedTransmissionElement);
-
                                     j++;
-
                                 }
                                 gatewayElement.appendChild(receivedTransmissions);
                                 runElement.appendChild(gatewayElement);
-
-
                             }
                             runs.appendChild(runElement);
                         }
@@ -775,24 +792,104 @@ public class MainGUI extends JFrame {
                 moteCharactesticsDialog.setVisible(true);
             }
         });
+        // add our parking-simulation external environment call handler
+        // swingWorkerCreation();
     }
 
     public static void main(String[] args) {
-
         mapViewer.setTileFactory(tileFactory);
-
         tileFactory.setThreadPoolSize(4);
-
         JFrame frame = new JFrame("Dynamic DingNet simulator");
         MainGUI gui = new MainGUI();
         frame.setContentPane(gui.mainPanel);
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         gui.updateInputProfile(inputProfiles);
         gui.loadAlgorithms(algorithms);
         frame.setVisible(true);
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+
+    public void swingWorkerCreation() {
+        SwingWorker externalCommunicator = new SwingWorker() {
+            // Method referenced from https://www.geeksforgeeks.org/swingworker-in-java/
+            @Override
+            protected String doInBackground() throws Exception {
+                // Defining what thread will do here
+//                for (int i = 10; i >= 0; i--) {
+//                    Thread.sleep(100);
+//                    System.out.println("Value in thread : "
+//                            + i);
+//                    publish(i);
+//                }
+                try {
+                    clientSocket = new ThreadedServer().createConnection();
+                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    int userInput = 0;
+                    String receivedOutput = "";
+                    while (!receivedOutput.equals("END\n")) {
+                        out.println(userInput);
+                        userInput += 5;
+                        // Thread.sleep(100);
+                        receivedOutput = in.readLine();
+                        System.out.println(receivedOutput);
+                        parseMoteParkingOccupancy(receivedOutput);
+                    }
+                } catch (IOException e) {
+                    System.out.println("-------All data has been received, and the external parking simulation has finished!!------");
+                    // e.printStackTrace();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (null != clientSocket)
+                            clientSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String res = "Finished Execution";
+                return res;
+            }
+
+            @Override
+            protected void process(List chunks) {
+                // define what the event dispatch thread
+                // will do with the intermediate results
+                // received while the thread is executing
+                System.out.println("Inside SwingWorker's process() function");
+                // statusLabel.setText(String.valueOf(val));
+            }
+
+            @Override
+            protected void done() {
+                // this method is called when the background
+                // thread finishes execution
+                try {
+                    String statusMsg = "Inside done() function";
+                    System.out.println(statusMsg);
+                    // statusLabel.setText(statusMsg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            private void parseMoteParkingOccupancy(String message) {
+                Mote temp;
+                // System.out.println("\nInside parse occupancy function -> " + message);
+                String[] codes = message.split(",");
+                if (codes.length > 2) {
+                    // System.out.println(codes[1].toUpperCase());
+                    temp = motesUpdatedProfile.get(codes[1].toUpperCase());
+                    assert temp != null;
+                    temp.setParkingOccupancy(Integer.parseInt(codes[2]));
+                }
+            }
+
+        };
+        externalCommunicator.execute();
     }
 
     private void loadAlgorithms(LinkedList<GenericFeedbackLoop> algorithms) {
@@ -836,7 +933,8 @@ public class MainGUI extends JFrame {
         for (Mote mote : environment.getMotes()) {
             textArea = new JTextArea();
             textArea.append("Mote " + (environment.getMotes().indexOf(mote) + 1) + ":\n");
-            textArea.append("EUID: " + Long.toUnsignedString(mote.getEUI()) + "\n");
+            textArea.append("Name: " + mote.getMoteName() + "\n");
+            textArea.append("Initial Parking-Occupancy: " + mote.getParkingOccupancy() + "\n");
             Double latitude = environment.toLatitude(mote.getYPos());
             Integer latitudeDegrees = (int) Math.round(Math.floor(latitude));
             Integer latitudeMinutes = (int) Math.round(Math.floor((latitude - latitudeDegrees) * 60));
@@ -1026,7 +1124,7 @@ public class MainGUI extends JFrame {
         i = 1;
         Map<Waypoint, Integer> motes = new HashMap();
         for (Mote mote : environment.getMotes()) {
-            motes.put(new DefaultWaypoint(new GeoPosition(environment.toLatitude(mote.getYPos()), environment.toLongitude(mote.getXPos()))), i);
+            motes.put(new DefaultWaypoint(new GeoPosition(environment.toLatitude(mote.getYPos()), environment.toLongitude(mote.getXPos()))), mote.getTransmissionPower());
             i++;
         }
         GatewayNumberWaypointPainter<Waypoint> gateWayNumberPainter = new GatewayNumberWaypointPainter<>();
